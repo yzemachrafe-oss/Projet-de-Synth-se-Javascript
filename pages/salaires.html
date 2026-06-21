@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColisTrack | Salaires</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+
+    <style>
+        /* Override the global dark-navy thead for the rules card table */
+        .table-regles thead { background: var(--gray-100); }
+        .table-regles thead th {
+            color: var(--gray-700);
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.8125rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .table-regles tbody td {
+            font-size: 0.9rem;
+            padding: 0.625rem 1rem;
+        }
+        .table-regles tbody tr:last-child { border-bottom: none; }
+
+        /* Detail modal — colored rows in the day-by-day table */
+        .detail-row-bonus   { background: rgba(16, 185, 129, 0.07); }
+        .detail-row-penalty { background: rgba(239,  68,  68, 0.07); }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Barre de navigation
+══════════════════════════════════════════════════════════════════════ -->
+<header class="app-header">
+
+    <a href="dashboard.html" class="brand">🚚 Colis<span>Track</span></a>
+
+    <nav>
+        <a href="dashboard.html">
+            <i class="bi bi-speedometer2"></i> Tableau de bord
+        </a>
+        <a href="livraisons.html">
+            <i class="bi bi-box-seam"></i> Livraisons
+        </a>
+        <a href="coursiers.html" class="admin-seulement">
+            <i class="bi bi-people"></i> Coursiers
+        </a>
+        <a href="salaires.html" class="active">
+            <i class="bi bi-cash-coin"></i> Salaires
+        </a>
+    </nav>
+
+    <div class="d-flex align-items-center gap-3">
+        <span style="color: rgba(255,255,255,0.65); font-size: 0.875rem;">
+            <i class="bi bi-person-circle me-1"></i>
+            <span id="nom-utilisateur"></span>
+        </span>
+        <button class="logout-btn" onclick="deconnecter()">
+            <i class="bi bi-box-arrow-right me-1"></i>Déconnexion
+        </button>
+    </div>
+
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Contenu principal
+══════════════════════════════════════════════════════════════════════ -->
+<main class="page-content">
+
+    <!-- ── En-tête de page ─────────────────────────────────────────── -->
+    <div class="page-header">
+        <div>
+            <h2>Calcul des Salaires</h2>
+            <div class="d-flex align-items-center gap-2 mt-1">
+                <span class="zone-badge zone-a">A</span>
+                <span style="font-size: 0.8125rem; color: var(--gray-500);">10 colis / tournée</span>
+                <span style="color: var(--gray-300); margin: 0 4px;">|</span>
+                <span class="zone-badge zone-b">B</span>
+                <span style="font-size: 0.8125rem; color: var(--gray-500);">8 colis / tournée</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Carte des règles de calcul ──────────────────────────────── -->
+    <div class="mb-4"
+         style="background: var(--white); border-radius: var(--radius);
+                padding: 1.5rem; box-shadow: var(--shadow-sm);">
+
+        <div style="font-size: 0.9375rem; font-weight: 700; color: var(--navy-900);
+                    margin-bottom: 1rem; padding-bottom: 0.625rem;
+                    border-bottom: 2px solid var(--amber-500); display: inline-block;">
+            <i class="bi bi-info-circle me-2" style="color: var(--amber-500);"></i>
+            Règles de calcul applicables
+        </div>
+
+        <div class="table-wrapper table-regles">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Règle</th>
+                        <th>Zone A</th>
+                        <th>Zone B</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Quota journalier</strong></td>
+                        <td>10 colis / tournée</td>
+                        <td>8 colis / tournée</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pénalité</strong></td>
+                        <td colspan="2">
+                            <span class="amount-penalty">−10 DH</span>
+                            par colis manquant sous le quota
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bonus excédent</strong></td>
+                        <td colspan="2">
+                            <span class="amount-bonus">+15 DH</span>
+                            par colis supplémentaire au-dessus du quota
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prime carburant</strong></td>
+                        <td colspan="2">
+                            <span class="amount-bonus">+5 %</span>
+                            du total du bonus brut (appliqué une seule fois)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statuts comptabilisés</strong></td>
+                        <td colspan="2">
+                            <span class="status-badge status-livre">Livré uniquement</span>
+                            — Les tournées « En attente » et « Retournée » sont ignorées
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── Barre de filtre ──────────────────────────────────────────── -->
+    <div class="mb-4"
+         style="background: var(--white); border-radius: var(--radius);
+                padding: 1.25rem 1.5rem; box-shadow: var(--shadow-sm);">
+
+        <div class="d-flex gap-3 flex-wrap align-items-end">
+
+            <!-- Mois -->
+            <div>
+                <label class="form-label mb-1"
+                       style="font-size: 0.8125rem; font-weight: 600; color: var(--gray-700);">
+                    Mois
+                </label>
+                <input type="month" id="sal-month" class="form-control" style="min-width: 160px;">
+            </div>
+
+            <!-- Coursier -->
+            <div>
+                <label class="form-label mb-1"
+                       style="font-size: 0.8125rem; font-weight: 600; color: var(--gray-700);">
+                    Coursier
+                </label>
+                <select id="sal-coursier" class="form-select" style="min-width: 220px;">
+                    <option value="">Tous les coursiers</option>
+                    <!-- rempli par salaires.js -->
+                </select>
+            </div>
+
+            <!-- Calculer -->
+            <div>
+                <button class="btn btn-primary" id="btn-calculer">
+                    <i class="bi bi-calculator me-1"></i>Calculer
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Tableau des résultats ────────────────────────────────────── -->
+    <div class="table-wrapper">
+        <table id="table-salaires">
+            <thead>
+                <tr>
+                    <th>Coursier</th>
+                    <th style="width: 70px;">Zone</th>
+                    <th>Salaire de base</th>
+                    <th style="width: 110px;">Jours travaillés</th>
+                    <th style="width: 110px;">Total colis</th>
+                    <th style="width: 120px;">Pénalités DH</th>
+                    <th style="width: 110px;">Bonus DH</th>
+                    <th style="width: 140px;">Prime carburant DH</th>
+                    <th style="width: 140px;">Salaire Final DH</th>
+                    <th style="width: 80px;">Détail</th>
+                </tr>
+            </thead>
+            <tbody id="salaires-body">
+                <!-- rempli par salaires.js -->
+            </tbody>
+            <tfoot id="salaires-footer">
+                <!-- rempli par salaires.js -->
+            </tfoot>
+        </table>
+    </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Modal — Détail jour par jour
+══════════════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-detail" tabindex="-1"
+     aria-labelledby="detail-titre" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border: none; border-radius: var(--radius); overflow: hidden;">
+
+            <div class="modal-header" style="background: var(--navy-900); border-bottom: none;">
+                <h5 class="modal-title text-white fw-bold" id="detail-titre">
+                    Détail du mois
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+
+            <!-- Corps rempli dynamiquement par salaires.js -->
+            <div class="modal-body p-4" id="detail-body">
+            </div>
+
+            <div class="modal-footer" style="border-top: 1px solid var(--gray-200);">
+                <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+                    Fermer
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ── Scripts ──────────────────────────────────────────────────────────── -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../scripts/session.js"></script>
+<script src="../scripts/db.js"></script>
+<script src="../scripts/salaires.js"></script>
+
+</body>
+</html>
