@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColisTrack | Connexion</title>
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- ColisTrack design system -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="login-card">
+
+        <!-- ── Logo ──────────────────────────────────────────────── -->
+        <div class="login-logo">
+            <div style="font-size: 2.75rem; line-height: 1;">🚚</div>
+            <h1>Colis<span>Track</span></h1>
+            <p>Système de gestion des livraisons</p>
+        </div>
+
+        <!-- ── Onglets ────────────────────────────────────────────── -->
+        <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active"
+                        id="connexion-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#connexion"
+                        type="button"
+                        role="tab"
+                        aria-controls="connexion"
+                        aria-selected="true">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="inscription-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#inscription"
+                        type="button"
+                        role="tab"
+                        aria-controls="inscription"
+                        aria-selected="false">
+                    <i class="bi bi-person-plus me-1"></i>Inscription
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="authTabsContent">
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <!-- Onglet 1 — Connexion                                 -->
+            <!-- ════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade show active"
+                 id="connexion"
+                 role="tabpanel"
+                 aria-labelledby="connexion-tab">
+
+                <!-- Zone d'erreur -->
+                <div id="login-error" class="alert alert-error hidden" role="alert"></div>
+
+                <form id="login-form" novalidate>
+
+                    <div class="form-group">
+                        <label for="login-email">Adresse e-mail</label>
+                        <input type="email"
+                               id="login-email"
+                               name="email"
+                               class="form-control"
+                               placeholder="exemple@colistrack.ma"
+                               autocomplete="email"
+                               required>
+                        <div class="invalid-feedback">
+                            Veuillez saisir une adresse e-mail valide.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Mot de passe</label>
+                        <input type="password"
+                               id="login-password"
+                               name="password"
+                               class="form-control"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               required>
+                        <div class="invalid-feedback">
+                            Le mot de passe est requis.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="remember-me"
+                                   name="remember">
+                            <label class="form-check-label" for="remember-me">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full mt-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Se connecter
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <!-- Onglet 2 — Inscription                               -->
+            <!-- ════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade"
+                 id="inscription"
+                 role="tabpanel"
+                 aria-labelledby="inscription-tab">
+
+                <!-- Zones de retour -->
+                <div id="register-error"   class="alert alert-error   hidden" role="alert"></div>
+                <div id="register-success" class="alert alert-success  hidden" role="alert"></div>
+
+                <form id="register-form" novalidate>
+
+                    <div class="form-group">
+                        <label for="reg-nom">Nom complet</label>
+                        <input type="text"
+                               id="reg-nom"
+                               name="nom"
+                               class="form-control"
+                               placeholder="Ex : Youssef Alaoui"
+                               autocomplete="name"
+                               minlength="3"
+                               required>
+                        <div class="invalid-feedback">
+                            Le nom complet est requis (minimum 3 caractères).
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-zone">Zone de livraison</label>
+                        <select id="reg-zone"
+                                name="zone"
+                                class="form-select"
+                                required>
+                            <option value="" selected disabled>Sélectionner une zone</option>
+                            <option value="A">Zone A — 10 colis/jour</option>
+                            <option value="B">Zone B — 8 colis/jour</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Veuillez sélectionner une zone de livraison.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-salaire">Salaire de base (DH)</label>
+                        <input type="number"
+                               id="reg-salaire"
+                               name="salaire_base"
+                               class="form-control"
+                               placeholder="Ex : 2 800"
+                               min="1500"
+                               step="50"
+                               required>
+                        <div class="invalid-feedback">
+                            Le salaire de base doit être d'au moins 1 500 DH.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-email">Adresse e-mail</label>
+                        <input type="email"
+                               id="reg-email"
+                               name="email"
+                               class="form-control"
+                               placeholder="exemple@colistrack.ma"
+                               autocomplete="email"
+                               required>
+                        <div class="invalid-feedback">
+                            Veuillez saisir une adresse e-mail valide.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-password">Mot de passe</label>
+                        <input type="password"
+                               id="reg-password"
+                               name="password"
+                               class="form-control"
+                               placeholder="••••••••"
+                               autocomplete="new-password"
+                               minlength="6"
+                               required>
+                        <div class="invalid-feedback">
+                            Le mot de passe doit contenir au moins 6 caractères.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-confirm">Confirmer le mot de passe</label>
+                        <input type="password"
+                               id="reg-confirm"
+                               name="confirm"
+                               class="form-control"
+                               placeholder="••••••••"
+                               autocomplete="new-password"
+                               required>
+                        <div class="invalid-feedback">
+                            Les mots de passe ne correspondent pas.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary btn-full mt-2">
+                        <i class="bi bi-person-check me-1"></i>Créer le compte
+                    </button>
+
+                </form>
+            </div>
+            <!-- ════════════════════════════════════════════════════ -->
+
+        </div><!-- /tab-content -->
+    </div><!-- /login-card -->
+</div><!-- /login-wrapper -->
+
+<!-- ── Scripts ──────────────────────────────────────────────────── -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="scripts/db.js"></script>
+<script src="scripts/index.js"></script>
+
+</body>
+</html>

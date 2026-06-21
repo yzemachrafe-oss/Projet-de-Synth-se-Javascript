@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColisTrack — Gestion des livraisons</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <style>
+        :root {
+            --surface: #ffffff;
+            --surface-soft: #f4f7fb;
+            --text: #0f2137;
+            --text-muted: rgba(15, 33, 55, 0.72);
+            --accent: #f59e0b;
+            --accent-strong: #d97706;
+            --dark: #0a1428;
+            --dark-soft: #142b4d;
+            --border: rgba(15, 33, 55, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f4f7fb;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 30px rgba(15, 33, 55, 0.06);
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .hero {
+            min-height: calc(100vh - 76px);
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.16), transparent 28%),
+                radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.14), transparent 24%),
+                linear-gradient(135deg, #0a1428 0%, #10233c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4.5rem 1.5rem;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 760px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-emoji {
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-18px);
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.06em;
+            margin-bottom: 1.25rem;
+            line-height: 0.95;
+        }
+
+        .hero-tagline {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: clamp(1rem, 2.3vw, 1.35rem);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.85rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #f8fafc;
+            padding: 0.9rem 1.15rem;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            backdrop-filter: blur(15px);
+        }
+
+        .hero-badge i {
+            font-size: 1rem;
+        }
+
+        .button-primary {
+            min-width: 180px;
+        }
+
+        .features-section,
+        .zones-section,
+        .rules-section,
+        .cta-section {
+            padding: 5rem 1.5rem;
+        }
+
+        .section-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            display: inline-block;
+            margin-bottom: 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .section-title {
+            font-size: clamp(2.1rem, 5vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .section-text {
+            max-width: 720px;
+            margin: 0 auto 3rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .row.g-4 {
+            row-gap: 1.5rem;
+        }
+
+        .feature-card,
+        .stat-card,
+        .rule-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 33, 55, 0.08);
+            border-radius: 1.1rem;
+            box-shadow: 0 20px 60px rgba(15, 33, 55, 0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .feature-card:hover,
+        .stat-card:hover,
+        .rule-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 28px 70px rgba(15, 33, 55, 0.12);
+        }
+
+        .feature-card {
+            padding: 2.2rem;
+            min-height: 260px;
+        }
+
+        .feature-icon {
+            font-size: 2.15rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.9rem;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.65rem;
+            color: var(--dark);
+        }
+
+        .stat-sub {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .rule-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rule-item:last-child {
+            border-bottom: none;
+        }
+
+        .rule-icon {
+            width: 52px;
+            min-width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-strong);
+            font-size: 1.3rem;
+        }
+
+        .rule-text {
+            color: #f8fafc;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .rule-text strong {
+            color: #ffffff;
+        }
+
+        .rules-section {
+            background: linear-gradient(135deg, #0a1428 0%, #10203b 100%);
+            color: #ffffff;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.14));
+        }
+
+        .cta-card {
+            max-width: 720px;
+            margin: 0 auto;
+            border-radius: 1.35rem;
+            padding: 2.5rem 2rem;
+            background: #ffffff;
+            box-shadow: 0 28px 70px rgba(15, 33, 55, 0.08);
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .cta-text {
+            color: var(--text-muted);
+            margin-bottom: 1.8rem;
+        }
+
+        .site-footer {
+            background: #0f2137;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .site-footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem 1rem;
+            }
+
+            .hero {
+                padding: 4rem 1rem;
+            }
+
+            .hero-tagline {
+                font-size: 1rem;
+            }
+
+            .feature-card,
+            .stat-card {
+                padding: 1.75rem;
+            }
+
+            .rule-item {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="app-header">
+        <a href="index.html" class="brand">🚚 Colis<span>Track</span></a>
+        <a href="main.html" class="btn btn-primary btn-sm button-primary">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
+        </a>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-emoji">🚚</div>
+            <h1 class="hero-title">Colis<span>Track</span></h1>
+            <p class="hero-tagline">Gestion des livraisons, des coursiers et des salaires dans un espace simple et
+                clair.</p>
+
+            <div class="hero-actions">
+                <a href="main.html" class="btn btn-primary btn-lg button-primary">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Connexion
+                </a>
+                <a href="#fonctionnalites" class="btn btn-outline-light btn-lg"
+                    style="border-color: rgba(255,255,255,.3); color: rgba(255,255,255,.92);">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Fonctionnalités
+                </a>
+            </div>
+
+            <div class="hero-badges">
+                <span class="hero-badge"><i class="bi bi-phone"></i>Mobile</span>
+                <span class="hero-badge"><i class="bi bi-shield-lock"></i>Sécurité</span>
+                <span class="hero-badge"><i class="bi bi-person-badge"></i>Rôles</span>
+                <span class="hero-badge"><i class="bi bi-speedometer2"></i>Navigation</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="fonctionnalites">
+        <div class="section-wrapper">
+            <div class="text-center">
+                <p class="section-eyebrow">Fonctionnalités</p>
+                <h2 class="section-title">Tous les outils pour votre activité</h2>
+                <p class="section-text">Un espace clair pour l’administrateur et les coursiers, avec des tableaux
+                    simples et des actions rapides.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <p class="feature-title">Tableau de bord</p>
+                        <p class="feature-desc">Suivez les performances du mois, les chiffres clés et le classement des
+                            coursiers en un coup d’œil.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <p class="feature-title">Gestions des livraisons</p>
+                        <p class="feature-desc">Ajoutez, modifiez ou supprimez des livraisons. Filtrez par mois,
+                            coursier et statut.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <p class="feature-title">Gestion des coursiers</p>
+                        <p class="feature-desc">Créez et organisez les comptes coursiers avec zone, salaire de base et
+                            suivi des livraisons.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <p class="feature-title">Calcul des salaires</p>
+                        <p class="feature-desc">Calculez automatiquement les primes, pénalités et montants finaux pour
+                            chaque coursier.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="zones-section">
+        <div class="section-wrapper">
+            <div class="text-center mb-4">
+                <p class="section-eyebrow">Zones de livraison</p>
+                <h2 class="section-title">Deux zones, une gestion claire</h2>
+                <p class="section-text">Chaque coursier dispose d’une zone. Les quotas sont appliqués automatiquement
+                    pour les salaires.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-sm-5">
+                    <div class="stat-card">
+                        <div class="stat-label"><span class="zone-badge zone-a me-2">A</span>Zone A</div>
+                        <div class="stat-value">10</div>
+                        <div class="stat-sub">colis minimum par journée</div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="stat-card">
+                        <div class="stat-label"><span class="zone-badge zone-b me-2">B</span>Zone B</div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-sub">colis minimum par journée</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="rules-section">
+        <div class="section-wrapper">
+            <div class="text-center mb-4">
+                <p class="section-eyebrow" style="color: rgba(245, 158, 11, 0.9);">Règles claires</p>
+                <h2 class="section-title" style="color: #ffffff;">Règles de calcul des salaires</h2>
+            </div>
+
+            <div class="rule-card" style="padding: 2rem; border: none; background: rgba(255,255,255,0.05);">
+                <div class="rule-item">
+                    <div class="rule-icon"><i class="bi bi-dash-circle"></i></div>
+                    <p class="rule-text"><strong>Pénalités</strong> — chaque colis manquant retire 10 DH.</p>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-icon"><i class="bi bi-plus-circle"></i></div>
+                    <p class="rule-text"><strong>Primes</strong> — chaque colis supplémentaire apporte 15 DH.</p>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-icon"><i class="bi bi-fuel-pump"></i></div>
+                    <p class="rule-text"><strong>Prime carburant</strong> — 5 % du bonus total.</p>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-icon"><i class="bi bi-check-circle"></i></div>
+                    <p class="rule-text"><strong>Statuts comptés</strong> — seules les livraisons marquées « Livré »
+                        sont prises en compte.</p>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-icon"><i class="bi bi-calculator"></i></div>
+                    <p class="rule-text"><strong>Résultat</strong> — Salaire de base − pénalités + primes + prime
+                        carburant.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-card">
+            <h2 class="cta-title">Découvrez l’espace professionnel</h2>
+            <p class="cta-text">Accédez à tous les outils de suivi et de gestion de livraison, avec un design moderne et
+                une navigation fluide.</p>
+            <a href="main.html" class="btn btn-primary btn-lg button-primary">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Accéder à l’espace
+            </a>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>Design and Developed by Achraf Yzem</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
